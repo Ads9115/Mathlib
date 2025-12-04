@@ -11,17 +11,25 @@ struct vec3 {
 
 	float x, y, z;
 
-	vec3( float x_ = 0.0f, float y_ = 0.0f, float z_ = 0.0f):x(x_),y(y_), z(z_) {}
+	vec3() :x(0.0f), y(0.0f), z(0.0f) {}
 
-	friend std::ostream& operator<<(std::ostream& os,const vec3& v) {
+	vec3(float x_, float y_, float z_) :x(x_), y(y_), z(z_) {}
+
+	vec3(float s) :x(s), y(s), z(s) {}
+
+	const float* ptr() const {
+		return &x; // Returns the memory address of the first component
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const vec3& v) {
 		os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
 		return os;
 	}
 
-	vec3 operator+(const vec3& v) const{
+	vec3 operator+(const vec3& v) const {
 
 		return vec3(x + v.x, y + v.y, z + v.z);
-	
+
 	}
 
 	vec3 operator-(const vec3& v)const {
@@ -35,7 +43,7 @@ struct vec3 {
 
 	}
 
-	vec3 operator-()const{
+	vec3 operator-()const {
 		return vec3(-x, -y, -z);
 	}
 
@@ -48,7 +56,7 @@ struct vec3 {
 	vec3 normalize() const {
 
 		float l = length();
-		
+
 		if (l > 0) return vec3(x / l, y / l, z / l);
 		return vec3(0, 0, 0);
 	}
@@ -77,12 +85,12 @@ inline float radians(float degrees) {
 struct mat4 {
 
 	float m[16];
-	
+
 	mat4() {
-		
+
 		for (int i = 0; i < 16; i++) m[i] = 0.0f;
 
-		
+
 		m[0] = 1.0f;
 		m[5] = 1.0f;
 		m[10] = 1.0f;
@@ -92,29 +100,29 @@ struct mat4 {
 	const float* ptr() const { return m; }  //for pointer refrence to gluniformmatrix4fv
 
 	static mat4 identity() {
-		
+
 		return mat4();
 	}
 
 	void print() const {
 		std::cout << "mat4:" << std::endl;
 		for (int i = 0; i < 16; ++i) {
-			std::cout << m[i] << "\t";  
+			std::cout << m[i] << "\t";
 
-			
+
 			if ((i + 1) % 4 == 0) {
-				std::cout << std::endl; 
+				std::cout << std::endl;
 			}
 		}
 	}
 
-	mat4 operator*(const mat4& rhs)const{
+	mat4 operator*(const mat4& rhs)const {
 
 		mat4 result;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				float sum = 0.0f;
-				for (int k = 0; k < 4;k++) {
+				for (int k = 0; k < 4; k++) {
 
 					sum += m[k * 4 + j] * rhs.m[i * 4 + k];
 				}
@@ -123,37 +131,57 @@ struct mat4 {
 		}
 
 		return result;
-	
-	
+
+
+	}
+
+	static mat4 translate(const vec3& t) {
+
+		mat4 result = identity();
+
+		result.m[12] = t.x;
+		result.m[13] = t.y;
+		result.m[14] = t.z;
+
+		return result;
+
+	}
+
+	static mat4 scale(const vec3& s) {
+		mat4 scale_mat = identity();
+		scale_mat.m[0] = s.x;
+		scale_mat.m[5] = s.y;
+		scale_mat.m[10] = s.z;
+		return scale_mat;
 	}
 
 	static mat4 rotate(float angle_rad, const vec3& axis) {
-        vec3 norm_axis = axis.normalize();
-        float c = std::cos(angle_rad);
-        float s = std::sin(angle_rad);
-        float t = 1.0f - c;
-        float x = norm_axis.x;
-        float y = norm_axis.y;
-        float z = norm_axis.z;
+		vec3 norm_axis = axis.normalize();
+		float c = std::cos(angle_rad);
+		float s = std::sin(angle_rad);
+		float t = 1.0f - c;
+		float x = norm_axis.x;
+		float y = norm_axis.y;
+		float z = norm_axis.z;
 
-        mat4 rot = identity();
-        // Col 0
-        rot.m[0] = t * x * x + c;
-        rot.m[1] = t * x * y + s * z;
-        rot.m[2] = t * x * z - s * y;
-        // Col 1
-        rot.m[4] = t * x * y - s * z;
-        rot.m[5] = t * y * y + c;
-        rot.m[6] = t * y * z + s * x;
-        // Col 2
-        rot.m[8] = t * x * z + s * y;
-        rot.m[9] = t * y * z - s * x;
-        rot.m[10] = t * z * z + c;
-        
-        return rot;
-    }
+		mat4 rot = identity();
+		// Col 0
+		rot.m[0] = t * x * x + c;
+		rot.m[1] = t * x * y + s * z;
+		rot.m[2] = t * x * z - s * y;
+		// Col 1
+		rot.m[4] = t * x * y - s * z;
+		rot.m[5] = t * y * y + c;
+		rot.m[6] = t * y * z + s * x;
+		// Col 2
+		rot.m[8] = t * x * z + s * y;
+		rot.m[9] = t * y * z - s * x;
+		rot.m[10] = t * z * z + c;
 
-	static mat4 lookAt(const vec3& eye, const vec3& centre, const vec3& up)  {
+		return rot;
+	}
+
+	static mat4 lookAt(const vec3& eye, const vec3& centre, const vec3& up) {
 
 		vec3 f = (eye - centre).normalize(); //moving in Z axis
 		vec3 s = vec3::cross(up, f).normalize(); // moving in sides X axis
@@ -178,12 +206,12 @@ struct mat4 {
 
 		//last column for translation
 
-		result.m[12] = -vec3::dot(s, eye);						
-		result.m[13] = -vec3::dot(u, eye);						
+		result.m[12] = -vec3::dot(s, eye);
+		result.m[13] = -vec3::dot(u, eye);
 		result.m[14] = -vec3::dot(f, eye);
 
 		return result;
-		
+
 	}
 
 	static mat4 perspective(float fov_rad, float aspect_ratio, float zNear, float zFar) {
@@ -195,7 +223,7 @@ struct mat4 {
 		float zRange = zNear - zFar;
 
 		//col 0
-		result.m[0] = f/aspect_ratio;
+		result.m[0] = f / aspect_ratio;
 
 		//col 1
 
@@ -213,5 +241,5 @@ struct mat4 {
 		return result;
 	}
 
-	
+
 };
