@@ -1,11 +1,67 @@
 #pragma once
-#include<iostream>
-#include<cmath>
+#include <iostream>
+#include <cmath>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
+struct vec2 {
+
+	float x, y;
+
+	vec2() :x(0.0f), y(0.0f) {}
+
+	vec2(float x_, float y_) :x(x_), y(y_) {}
+
+	vec2(float s) :x(s), y(s) {}
+
+	const float* ptr() const {
+		return &x; // Returns the memory address of the first component
+	}
+
+	vec2 operator+(const vec2& v) const{
+
+		return vec2(x + v.x, y + v.y);
+	}
+
+	vec2 operator-(const vec2& v) const{
+
+		return vec2(x-v.x, y-v.y);
+	}
+
+	vec2 operator*(float s) const {
+
+		return vec2(x * s, y * s);
+	}
+
+	float length() const {
+		return std::sqrt(x * x + y * y);
+	}
+
+	vec2 normalise() const {
+
+		float l = length();
+
+		if(l<0) return vec2(x/l , y/l);
+		return vec2(0, 0);
+	}
+
+	static float dot(const vec2&v1, const vec2& v2) {
+
+		return v1*x * v2.x + v1.y * v2.y;
+	}
+
+	static float cross(const vec2& v1, const vec2& v2) {
+
+		return v1.x * v2.y - v1.y * v2.x;
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const vec2& v) {
+		os << "(" << v.x << ", " << v.y << ")";
+		return os;
+
+};
 
 struct vec3 {
 
