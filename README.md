@@ -3,9 +3,9 @@
 ![C++](https://img.shields.io/badge/C%2B%2B-17-blue?logo=c%2B%2B)
 ![OpenGL](https://img.shields.io/badge/OpenGL-Math-orange?logo=opengl)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Version-v0.2--Core--Math-blueviolet)
+![Status](https://img.shields.io/badge/Version-v0.3--Core--Math-blueviolet)
 
-A lightweight, header-only **mathematics library** written in **C++**, designed to rebuild and understand the core mathematical foundations used in **OpenGL graphics programming** — including vectors, matrices, transformations, and projection utilities.
+A lightweight, header-only **mathematics library** written in **C++**, designed to rebuild and understand the core mathematical foundations used in **OpenGL graphics programming** — including vectors, matrices, transformations, shaders, and projection utilities.
 
 This project is part of an ongoing effort to learn, document, and implement graphics-related math operations from scratch without relying on libraries like GLM.
 
@@ -15,17 +15,23 @@ This project is part of an ongoing effort to learn, document, and implement grap
 
 ### 🧱 Vector Types
 
-#### `vec2` *(new)*
+#### `vec2`
 - Addition, subtraction, scalar multiplication  
 - Dot product  
-- Magnitude and normalization  
+- Length and normalization  
 - Stream output helpers  
 
 #### `vec3`
 - Addition, subtraction, scalar multiplication  
 - Dot and cross product  
-- Normalization and length calculation  
+- Length and normalization  
 - Stream output for debugging  
+
+#### `vec4` *(new)*
+- Addition, subtraction, scalar multiplication  
+- Dot product  
+- Homogeneous coordinate utilities  
+- Stream output helpers  
 
 ---
 
@@ -33,10 +39,32 @@ This project is part of an ongoing effort to learn, document, and implement grap
 - Identity matrix  
 - Matrix–matrix multiplication  
 - **Scale matrix** ✔ *(new)*  
-- **Rotation matrix** (arbitrary axis) ✔ *(new)*  
+- **Rotation matrix** (X/Y/Z + arbitrary axis) ✔ *(new)*  
 - LookAt view matrix  
 - Perspective projection matrix  
 - Pointer access for OpenGL (`glUniformMatrix4fv`)  
+
+---
+
+## 🎨 Shader Abstraction *(new)*
+
+### Files:
+- `shader.cpp`
+- `shader.h`
+
+### Features:
+- Load vertex and fragment shader files  
+- Compile and link shaders  
+- Error checking and log output  
+- `use()` method binding  
+- Uniform helpers:  
+  - `setMat4()`  
+  - `setVec3()`  
+  - `setVec4()`  
+  - `setFloat()`  
+  - `setInt()`  
+
+A minimal, modern OpenGL-style abstraction to clean up rendering code.
 
 ---
 
@@ -50,7 +78,7 @@ This project is part of an ongoing effort to learn, document, and implement grap
 ## 🧠 Goals
 - Build a strong foundation in graphics math  
 - Understand the logic behind OpenGL transformations  
-- Create a reusable math system for rendering  
+- Create a reusable math + shader abstraction layer  
 - Prepare groundwork for a future graphics engine  
 
 ---
@@ -59,11 +87,12 @@ This project is part of an ongoing effort to learn, document, and implement grap
 
 | Feature | Status |
 |--------|--------|
-| `vec4`, `mat3` support | ⏳ Planned |
+| `mat3` support | ⏳ Planned |
 | Translation matrix | ⏳ Planned |
 | Orthographic projection | ⏳ Planned |
 | Quaternions | ⏳ Planned |
 | Camera utilities | ⏳ Planned |
+| Material + Texture abstraction | ⏳ Planned |
 | Unit tests | ⏳ Planned |
 
 ---
