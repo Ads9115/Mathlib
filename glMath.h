@@ -132,7 +132,7 @@ struct vec3 {
 	}
 };
 
-vec4 struct {
+struct vec4 {
 
 	float x, y, z, w;
 
@@ -186,7 +186,7 @@ vec4 struct {
 	}
 
 
-	
+
 
 };
 
