@@ -11,7 +11,7 @@ This project is part of an ongoing effort to learn, document, and implement grap
 
 ---
 
-## 🚀 Features
+##  Features
 
 ### 🧱 Vector Types
 
