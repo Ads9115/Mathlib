@@ -1,108 +1,100 @@
-# 🧮 OpenGL Mathematics Library (C++)
+# Mathlib
 
-![C++](https://img.shields.io/badge/C%2B%2B-17-blue?logo=c%2B%2B)
-![OpenGL](https://img.shields.io/badge/OpenGL-Math-orange?logo=opengl)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Version-v0.3--Core--Math-blueviolet)
+A lightweight C++ math helper library for OpenGL-style graphics programming, plus a minimal shader wrapper.
 
-A lightweight, header-only **mathematics library** written in **C++**, designed to rebuild and understand the core mathematical foundations used in **OpenGL graphics programming** — including vectors, matrices, transformations, shaders, and projection utilities.
+> Built for learning and small graphics projects where you want transparent math code instead of a large dependency stack.
 
-This project is part of an ongoing effort to learn, document, and implement graphics-related math operations from scratch without relying on libraries like GLM.
+## What's in this repository
 
----
+- `glMath.h` — header-only vector and matrix math types
+  - `vec2`, `vec3`, `vec4`
+  - `mat4` identity, multiply, translate, scale, rotate, lookAt, perspective
+  - `radians()` helper
+- `Shader.h` / `Shader.cpp` — basic shader program wrapper
+  - loads vertex + fragment shader files
+  - compiles and links a program
+  - uniform helper setters (`float`, `int`, `vec2`, `vec3`, `vec4`, `mat4`)
 
-##  Features
+## Repository layout
 
-### 🧱 Vector Types
+```text
+.
+├── glMath.h
+├── Shader.h
+├── Shader.cpp
+├── README.md
+└── LICENSE
+```
 
-#### `vec2`
-- Addition, subtraction, scalar multiplication  
-- Dot product  
-- Length and normalization  
-- Stream output helpers  
+## Requirements
 
-#### `vec3`
-- Addition, subtraction, scalar multiplication  
-- Dot and cross product  
-- Length and normalization  
-- Stream output for debugging  
+- C++17 or newer
+- OpenGL context setup in your app
+- GL loader (current shader wrapper includes `<glad/glad.h>`)
 
-#### `vec4` *(new)*
-- Addition, subtraction, scalar multiplication  
-- Dot product  
-- Homogeneous coordinate utilities  
-- Stream output helpers  
+## Quick start
 
----
+### 1) Use the math types
 
-## 🧮 Matrix Operations (`mat4`)
-- Identity matrix  
-- Matrix–matrix multiplication  
-- **Scale matrix** ✔ *(new)*  
-- **Rotation matrix** (X/Y/Z + arbitrary axis) ✔ *(new)*  
-- LookAt view matrix  
-- Perspective projection matrix  
-- Pointer access for OpenGL (`glUniformMatrix4fv`)  
+```cpp
+#include "glMath.h"
 
----
+vec3 position(0.0f, 0.0f, -3.0f);
+vec3 axis(0.0f, 1.0f, 0.0f);
 
-## 🎨 Shader Abstraction *(new)*
+mat4 model = mat4::translate(position)
+           * mat4::rotate(radians(45.0f), axis)
+           * mat4::scale(vec3(1.2f));
 
-### Files:
-- `shader.cpp`
-- `shader.h`
+mat4 view = mat4::lookAt(
+    vec3(0.0f, 0.0f, 3.0f),
+    vec3(0.0f, 0.0f, 0.0f),
+    vec3(0.0f, 1.0f, 0.0f)
+);
 
-### Features:
-- Load vertex and fragment shader files  
-- Compile and link shaders  
-- Error checking and log output  
-- `use()` method binding  
-- Uniform helpers:  
-  - `setMat4()`  
-  - `setVec3()`  
-  - `setVec4()`  
-  - `setFloat()`  
-  - `setInt()`  
+mat4 proj = mat4::perspective(radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
+```
 
-A minimal, modern OpenGL-style abstraction to clean up rendering code.
+### 2) Use the shader wrapper
 
----
+```cpp
+#include "Shader.h"
 
-## 🔧 Compatibility
-- **Language:** C++17 or newer  
-- **API:** OpenGL (GLAD + GLFW)  
-- **Platform:** Windows / Linux / macOS  
+Shader shader("shaders/basic.vert", "shaders/basic.frag");
+shader.use();
+shader.setMat4("uModel", model);
+shader.setMat4("uView", view);
+shader.setMat4("uProjection", proj);
+shader.setVec3("uColor", vec3(1.0f, 0.5f, 0.2f));
+```
 
----
+## Build note
 
-## 🧠 Goals
-- Build a strong foundation in graphics math  
-- Understand the logic behind OpenGL transformations  
-- Create a reusable math + shader abstraction layer  
-- Prepare groundwork for a future graphics engine  
+This repository does not currently ship with CMake or another build system file.
 
----
+Example (adapt include/library paths to your environment):
 
-## 🌱 Future Plans
+```bash
+g++ -std=c++17 main.cpp Shader.cpp -I. -lglfw -ldl -lGL -o app
+```
 
-| Feature | Status |
-|--------|--------|
-| `mat3` support | ⏳ Planned |
-| Translation matrix | ⏳ Planned |
-| Orthographic projection | ⏳ Planned |
-| Quaternions | ⏳ Planned |
-| Camera utilities | ⏳ Planned |
-| Material + Texture abstraction | ⏳ Planned |
-| Unit tests | ⏳ Planned |
+## Project goals
 
----
+- Keep API minimal and easy to read
+- Serve as an educational OpenGL math reference
+- Incrementally improve correctness, tests, and debug tooling
 
-## 🧑‍💻 Contributing
+## Roadmap ideas
 
-1. **Fork** the repository  
-2. **Create a branch** (`feature/your-feature-name`)  
-3. **Commit your changes**  
-4. **Open a Pull Request**  
+- Add unit tests for vector/matrix correctness
+- Add robust shader compile/link error reporting
+- Add CMake build + CI workflow
+- Add orthographic projection and `mat3`
 
----
+## Contributing
 
+Contributions are welcome. Please keep pull requests focused and include a short test/validation note.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
