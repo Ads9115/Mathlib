@@ -25,6 +25,7 @@ test_runner
 *.swo
 *~
 .DS_Store
+compile_commands.json
 
 # In-source CMake artifacts
 CMakeCache.txt
