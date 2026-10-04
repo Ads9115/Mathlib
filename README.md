@@ -1,43 +1,64 @@
 # Mathlib
 
-A lightweight C++ math helper library for OpenGL-style graphics programming, plus a minimal shader wrapper.
+A lightweight, header-only C++ math library for graphics programming.
 
 > Built for learning and small graphics projects where you want transparent math code instead of a large dependency stack.
 
-## What's in this repository
+## Features
 
-- `glMath.h` — header-only vector and matrix math types
-  - `vec2`, `vec3`, `vec4`
-  - `mat4` identity, multiply, translate, scale, rotate, lookAt, perspective
-  - `radians()` helper
-- `Shader.h` / `Shader.cpp` — basic shader program wrapper
-  - loads vertex + fragment shader files
-  - compiles and links a program
-  - uniform helper setters (`float`, `int`, `vec2`, `vec3`, `vec4`, `mat4`)
+- **Vectors (`vec2`, `vec3`, `vec4`)**:
+  - Addition, subtraction, scalar multiplication
+  - Dot product, cross product, length, and normalization
+- **Matrices (`mat4`)**:
+  - Identity and matrix multiplication
+  - Transformations: `translate`, `scale`, `rotate`
+  - Camera & projection: `lookAt`, `perspective`
+- **Helpers**:
+  - `radians()` conversion helper
 
-## Repository layout
+## Repository Layout
 
 ```text
 .
-├── glMath.h
-├── Shader.h
-├── Shader.cpp
-├── README.md
-└── LICENSE
+├── include/
+│   └── mathlib/
+│       ├── common.h
+│       ├── mathlib.h        # Umbrella header
+│       ├── vec2.h
+│       ├── vec3.h
+│       ├── vec4.h
+│       └── mat4.h
+├── examples/
+│   └── basic_usage.cpp      # Usage example
+├── tests/
+│   └── test_math.cpp        # Unit tests
+├── glMath.h                 # Backwards-compatible include
+├── CMakeLists.txt
+├── CONTRIBUTING.md
+├── LICENSE
+└── README.md
 ```
 
-## Requirements
+## How to Use
 
-- C++17 or newer
-- OpenGL context setup in your app
-- GL loader (current shader wrapper includes `<glad/glad.h>`)
+Since Mathlib is header-only, you can either:
 
-## Quick start
+1. Include the umbrella header in your project:
+   ```cpp
+   #include <mathlib/mathlib.h>
+   ```
+   *(or `#include "glMath.h"` if migrating from earlier versions)*
 
-### 1) Use the math types
+2. Or add it with CMake:
+   ```cmake
+   add_subdirectory(Mathlib)
+   target_link_libraries(your_target PRIVATE mathlib)
+   ```
+
+### Quick Example
 
 ```cpp
-#include "glMath.h"
+#include <mathlib/mathlib.h>
 
 vec3 position(0.0f, 0.0f, -3.0f);
 vec3 axis(0.0f, 1.0f, 0.0f);
@@ -55,45 +76,31 @@ mat4 view = mat4::lookAt(
 mat4 proj = mat4::perspective(radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
 ```
 
-### 2) Use the shader wrapper
+## Building & Tests
 
-```cpp
-#include "Shader.h"
-
-Shader shader("shaders/basic.vert", "shaders/basic.frag");
-shader.use();
-shader.setMat4("uModel", model);
-shader.setMat4("uView", view);
-shader.setMat4("uProjection", proj);
-shader.setVec3("uColor", vec3(1.0f, 0.5f, 0.2f));
-```
-
-## Build note
-
-This repository does not currently ship with CMake or another build system file.
-
-Example (adapt include/library paths to your environment):
+Requires C++17 or newer. To build and run the test suite:
 
 ```bash
-g++ -std=c++17 main.cpp Shader.cpp -I. -lglfw -ldl -lGL -o app
+cmake -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
 ```
 
-## Project goals
+To run the example:
+```bash
+./build/basic_usage
+```
 
-- Keep API minimal and easy to read
-- Serve as an educational OpenGL math reference
-- Incrementally improve correctness, tests, and debug tooling
+Or compile and run tests directly with `g++`:
 
-## Roadmap ideas
-
-- Add unit tests for vector/matrix correctness
-- Add robust shader compile/link error reporting
-- Add CMake build + CI workflow
-- Add orthographic projection and `mat3`
+```bash
+g++ -std=c++17 -Iinclude tests/test_math.cpp -o test_runner
+./test_runner
+```
 
 ## Contributing
 
-Contributions are welcome. Please keep pull requests focused and include a short test/validation note.
+Contributions are welcome! Check [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on code style, tests, and pull requests.
 
 ## License
 
