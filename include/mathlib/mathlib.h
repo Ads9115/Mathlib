@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "mat2.h"
 #include "mat4.h"
 #include "vec2.h"
 #include "vec3.h"
